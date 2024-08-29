@@ -18,10 +18,23 @@ const createWindow = () => {
 app.whenReady().then(async () => { 
   createWindow();
 
-  ipcMain.on('set-title', (event, title) => {
-    //获取网页上下文
-    const win = BrowserWindow.fromWebContents(event.sender)
-    //修改title
-    win.setTitle(title)
-  });
+  // ipcMain.on('set-title', (event, title) => {
+  //   //获取网页上下文
+  //   const win = BrowserWindow.fromWebContents(event.sender)
+  //   //修改title
+  //   win.setTitle(title)
+  // });
+
+  ipcMain.handle('set-title', handleTitleChange)
 })
+
+async function handleTitleChange(event, data) { 
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const webContents = event.sender;
+      const win = BrowserWindow.fromWebContents(webContents);
+      win.setTitle(data);
+      resolve('from main');
+    }, 2000);
+  })
+}

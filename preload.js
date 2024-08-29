@@ -8,8 +8,10 @@ contextBridge.exposeInMainWorld('versions', {
 })
 
 contextBridge.exposeInMainWorld('electronAPI', {
+  // setTitle: (title) => {
+  //   ipcRenderer.send('set-title', title)
+  // }
   setTitle: (title) => {
-    ipcRenderer.send('set-title', title)
+    return ipcRenderer.invoke('set-title', title)
   }
-  
 })

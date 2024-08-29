@@ -19,8 +19,9 @@
   createApp({
     setup() {
       const message = ref('hello vue!')
-      const handleClick = () => {
-        window.electronAPI.setTitle(message.value);
+      const handleClick = async () => {
+        const txt = await window.electronAPI.setTitle(message.value);
+        console.log(txt); 
       }
       return {
         message,
