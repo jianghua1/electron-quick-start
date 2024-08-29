@@ -13,5 +13,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // }
   setTitle: (title) => {
     return ipcRenderer.invoke('set-title', title)
-  }
+  },
+  callFormMain: (callback) => ipcRenderer.on('msg-main',callback)
 })

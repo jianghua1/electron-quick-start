@@ -1,9 +1,9 @@
-const { app, BrowserWindow,ipcMain } = require('electron')
+const { app, BrowserWindow,ipcMain,Menu } = require('electron')
 const path = require('node:path')
 
-
+let win;
 const createWindow = () => {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -15,6 +15,19 @@ const createWindow = () => {
   win.loadFile('index.html');
   win.webContents.openDevTools();
 }
+
+const menus = Menu.buildFromTemplate([
+  {
+    label: app.name,
+    submenu: [
+      {
+        label: 'Undo',
+        click: ()=>win.webContents.send('msg-main','我是来自主进程的消息')
+      }]
+  }
+])
+Menu.setApplicationMenu(menus)
+
 app.whenReady().then(async () => { 
   createWindow();
 
@@ -32,8 +45,8 @@ async function handleTitleChange(event, data) {
   return new Promise((resolve) => {
     setTimeout(() => {
       const webContents = event.sender;
-      const win = BrowserWindow.fromWebContents(webContents);
-      win.setTitle(data);
+      const win2 = BrowserWindow.fromWebContents(webContents);
+      win2.setTitle(data);
       resolve('from main');
     }, 2000);
   })

@@ -23,6 +23,11 @@
         const txt = await window.electronAPI.setTitle(message.value);
         console.log(txt); 
       }
+
+      const handleReply = (event,data) => {
+        console.log(data)
+      }
+      window.electronAPI.callFormMain(handleReply);
       return {
         message,
         handleClick

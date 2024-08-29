@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "electron .",
-    "dev":"nodemon --exec electron .",
-    "debug":"nodemon --exec electron --inspect-brk ."
+    "dev": "nodemon --exec electron .",
+    "debug": "nodemon --exec electron --inspect-brk ."
   },
   "keywords": [],
   "author": "",
