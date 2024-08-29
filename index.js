@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow,ipcMain } = require('electron')
 const path = require('node:path')
 
 
@@ -15,4 +15,13 @@ const createWindow = () => {
   win.loadFile('index.html');
   win.webContents.openDevTools();
 }
-app.whenReady().then(createWindow)
+app.whenReady().then(async () => { 
+  createWindow();
+
+  ipcMain.on('set-title', (event, title) => {
+    //获取网页上下文
+    const win = BrowserWindow.fromWebContents(event.sender)
+    //修改title
+    win.setTitle(title)
+  });
+})

@@ -4,11 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
-  Hello Electron
+  <div id="app">
+    <p>{{message}}</p>
+    <input type="text" v-model="message">
+    <button @click="handleClick">setTitle</button>
+  </div>
 </body>
 <script>
-  console.log('111',window.versions)
+  const { createApp,ref } = Vue
+
+  createApp({
+    setup() {
+      const message = ref('hello vue!')
+      const handleClick = () => {
+        window.electronAPI.setTitle(message.value);
+      }
+      return {
+        message,
+        handleClick
+      }
+    }
+  }).mount('#app')
 </script>
 </html>
