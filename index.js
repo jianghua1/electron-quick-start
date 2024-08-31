@@ -1,4 +1,4 @@
-const { app, BrowserWindow,ipcMain,Menu,shell ,MenuItem,Tray} = require('electron');
+const { app, BrowserWindow,ipcMain,Menu,shell ,MenuItem,Tray, globalShortcut} = require('electron');
 const { type } = require('node:os');
 const path = require('node:path')
 
@@ -97,7 +97,7 @@ app.on('ready', () => {
   tray.setContextMenu(contextMenu);
 });
 
-app.whenReady().then(() => { 
+app.whenReady().then(() => {
   createWindow();
 
   // ipcMain.on('set-title', (event, title) => {
@@ -128,7 +128,24 @@ app.whenReady().then(() => {
     if (win)
       popupMenu.popup({ window: win });
   })
+
+  const ret = globalShortcut.register('CommandOrControl+Shift+X',() => {
+    const win = BrowserWindow.getFocusedWindow()
+    win && win.setFullScreen(!win.isFullScreen())
+    //禁止缩放
+    // win.setResizable(false)
+  });
+  
+  if (!ret) { 
+    console.log('注册失败')
+  }
+  //检查快捷键是否注册成功
+  console.log(globalShortcut.isRegistered('CommandOrControl+Shift+X'))
 })
+
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
+});
 
 async function handleTitleChange(event, data) { 
   return new Promise((resolve) => {
