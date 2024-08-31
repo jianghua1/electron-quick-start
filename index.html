@@ -34,5 +34,18 @@
       }
     }
   }).mount('#app')
+
+document.addEventListener('contextmenu', (e) => {
+  window.electronAPI.openMenu()
+});
+  
+const checkInterval = setInterval(() => {
+  if (window.electronAPI.reply) {
+    clearInterval(checkInterval)
+    window.electronAPI.reply((event,data) => {
+      console.log('回调成功', event, data)
+    })
+  }
+},200)
 </script>
 </html>

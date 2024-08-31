@@ -14,5 +14,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   setTitle: (title) => {
     return ipcRenderer.invoke('set-title', title)
   },
-  callFormMain: (callback) => ipcRenderer.on('msg-main',callback)
+  callFormMain: (callback) => ipcRenderer.on('msg-main', callback),
+  
+  openMenu: () => { 
+    ipcRenderer.send('show-context-menu')
+  },
+  reply: (func) => {
+    ipcRenderer.on('menu-click', func)
+  }
 })
+

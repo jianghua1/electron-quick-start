@@ -1,4 +1,4 @@
-const { app, BrowserWindow,ipcMain,Menu,shell ,MenuItem} = require('electron');
+const { app, BrowserWindow,ipcMain,Menu,shell ,MenuItem,Tray} = require('electron');
 const { type } = require('node:os');
 const path = require('node:path')
 
@@ -86,7 +86,18 @@ const templates = [
 menu = Menu.buildFromTemplate(templates);
 Menu.setApplicationMenu(menu);
 
-app.whenReady().then(async () => { 
+app.on('ready', () => {
+  tray = new Tray('./assert/logo.jpeg');
+  const contextMenu = Menu.buildFromTemplate([
+    { label: 'Item 1' },
+    { label: 'Item 2' },
+    { label: 'Item 3' },
+  ]);
+  tray.setToolTip('我的应用程序');
+  tray.setContextMenu(contextMenu);
+});
+
+app.whenReady().then(() => { 
   createWindow();
 
   // ipcMain.on('set-title', (event, title) => {
@@ -96,7 +107,27 @@ app.whenReady().then(async () => {
   //   win.setTitle(title)
   // });
 
-  ipcMain.handle('set-title', handleTitleChange)
+  // ipcMain.handle('set-title', handleTitleChange)
+  ipcMain.on('show-context-menu', (event) => {
+
+    const popupTemplate = [
+      {
+        label: 'menu1',
+        click: (ev) => {
+          win.send('menu-click', 'menu1')
+        }
+      },
+      {
+        label: 'menu2',
+      }
+    ]
+
+    const popupMenu = Menu.buildFromTemplate(popupTemplate);
+
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win)
+      popupMenu.popup({ window: win });
+  })
 })
 
 async function handleTitleChange(event, data) { 
