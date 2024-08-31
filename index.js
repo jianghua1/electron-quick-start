@@ -1,20 +1,29 @@
-const { app, BrowserWindow,ipcMain,Menu,shell ,MenuItem,Tray, globalShortcut} = require('electron');
-const { type } = require('node:os');
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  shell,
+  MenuItem,
+  Tray,
+  globalShortcut
+} = require('electron')
+const { type } = require('node:os')
 const path = require('node:path')
 
-let win;
+let win
 const createWindow = () => {
   win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
       sandbox: false,
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.js')
     }
   })
   //窗口对象win
-  win.loadFile('index.html');
-  win.webContents.openDevTools();
+  win.loadFile('index.html')
+  win.webContents.openDevTools()
 }
 
 // const menus = Menu.buildFromTemplate([
@@ -29,7 +38,7 @@ const createWindow = () => {
 // ])
 // Menu.setApplicationMenu(menus)
 
-let menu;
+let menu
 
 const templates = [
   // 内置菜单
@@ -46,36 +55,35 @@ const templates = [
       { role: 'zoomOut' },
       {
         label: '我的主页',
-        click: () => { 
+        click: () => {
           shell.openExternal('https://www.baidu.com')
           //动态设置菜单按钮
-
         },
         accelerator: 'CmdOrCtrl+H'
       },
       {
         id: '100',
         label: '动态按钮设置',
-        click: (ev) => { 
+        click: (ev) => {
           //动态设置菜单按钮
-          ev.visible = false;
+          ev.visible = false
           const temp = new MenuItem({
             id: '101',
             label: '设置后按钮',
             accelerator: 'CmdOrCtrl+G'
-          });
-          menu.getMenuItemById('99').submenu.append(temp);
-          Menu.setApplicationMenu(menu);
+          })
+          menu.getMenuItemById('99').submenu.append(temp)
+          Menu.setApplicationMenu(menu)
         },
         accelerator: 'CmdOrCtrl+F'
       },
       {
         id: '102',
         label: '禁用当前按钮',
-        click: (ev) => { 
+        click: (ev) => {
           console.log(ev)
           //动态设置菜单按钮
-          ev.enabled = false;
+          ev.enabled = false
         },
         accelerator: 'CmdOrCtrl+D'
       }
@@ -83,22 +91,22 @@ const templates = [
   }
 ]
 
-menu = Menu.buildFromTemplate(templates);
-Menu.setApplicationMenu(menu);
+menu = Menu.buildFromTemplate(templates)
+Menu.setApplicationMenu(menu)
 
 app.on('ready', () => {
-  tray = new Tray('./assert/logo.jpeg');
+  tray = new Tray('./assert/logo.jpeg')
   const contextMenu = Menu.buildFromTemplate([
     { label: 'Item 1' },
     { label: 'Item 2' },
-    { label: 'Item 3' },
-  ]);
-  tray.setToolTip('我的应用程序');
-  tray.setContextMenu(contextMenu);
-});
+    { label: 'Item 3' }
+  ])
+  tray.setToolTip('我的应用程序')
+  tray.setContextMenu(contextMenu)
+})
 
 app.whenReady().then(() => {
-  createWindow();
+  createWindow()
 
   // ipcMain.on('set-title', (event, title) => {
   //   //获取网页上下文
@@ -109,7 +117,6 @@ app.whenReady().then(() => {
 
   // ipcMain.handle('set-title', handleTitleChange)
   ipcMain.on('show-context-menu', (event) => {
-
     const popupTemplate = [
       {
         label: 'menu1',
@@ -118,25 +125,24 @@ app.whenReady().then(() => {
         }
       },
       {
-        label: 'menu2',
+        label: 'menu2'
       }
     ]
 
-    const popupMenu = Menu.buildFromTemplate(popupTemplate);
+    const popupMenu = Menu.buildFromTemplate(popupTemplate)
 
-    const win = BrowserWindow.fromWebContents(event.sender);
-    if (win)
-      popupMenu.popup({ window: win });
+    const win = BrowserWindow.fromWebContents(event.sender)
+    if (win) popupMenu.popup({ window: win })
   })
 
-  const ret = globalShortcut.register('CommandOrControl+Shift+X',() => {
+  const ret = globalShortcut.register('CommandOrControl+Shift+X', () => {
     const win = BrowserWindow.getFocusedWindow()
     win && win.setFullScreen(!win.isFullScreen())
     //禁止缩放
     // win.setResizable(false)
-  });
-  
-  if (!ret) { 
+  })
+
+  if (!ret) {
     console.log('注册失败')
   }
   //检查快捷键是否注册成功
@@ -144,16 +150,16 @@ app.whenReady().then(() => {
 })
 
 app.on('will-quit', () => {
-  globalShortcut.unregisterAll();
-});
+  globalShortcut.unregisterAll()
+})
 
-async function handleTitleChange(event, data) { 
+async function handleTitleChange(event, data) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      const webContents = event.sender;
-      const win2 = BrowserWindow.fromWebContents(webContents);
-      win2.setTitle(data);
-      resolve('from main');
-    }, 2000);
+      const webContents = event.sender
+      const win2 = BrowserWindow.fromWebContents(webContents)
+      win2.setTitle(data)
+      resolve('from main')
+    }, 2000)
   })
 }
